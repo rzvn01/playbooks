@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Get OS release information
+      shell: cat /etc/os-release
+      register: os_release
+
+    - name: Display OS release information
+      debug:
+        msg: "{{ os_release.stdout }}"
