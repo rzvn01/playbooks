@@ -5,19 +5,11 @@
     - name: Get OS release information
       shell: cat /etc/os-release
       register: os_release
-      ignore_errors: true
 
-    - name: Display OS release information
+    - name: Extract PRETTY_NAME
+      set_fact:
+        pretty_name: "{{ os_release.stdout | regex_search('PRETTY_NAME=\"(.+?)\"', '\\1') }}"
+
+    - name: Display PRETTY_NAME
       debug:
-        msg: "{{ os_release.stdout }}"
-      when: os_release.rc == 0
-
-    - name: Alternative OS detection if os-release fails
-      shell: uname -a
-      register: uname_output
-      when: os_release.rc != 0
-
-    - name: Display alternative OS info
-      debug:
-        msg: "{{ uname_output.stdout }}"
-      when: os_release.rc != 0
+        msg: "The pretty name is: {{ pretty_name }}"
