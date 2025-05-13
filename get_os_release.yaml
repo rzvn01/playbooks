@@ -5,7 +5,19 @@
     - name: Get OS release information
       shell: cat /etc/os-release
       register: os_release
+      ignore_errors: true
 
     - name: Display OS release information
       debug:
         msg: "{{ os_release.stdout }}"
+      when: os_release.rc == 0
+
+    - name: Alternative OS detection if os-release fails
+      shell: uname -a
+      register: uname_output
+      when: os_release.rc != 0
+
+    - name: Display alternative OS info
+      debug:
+        msg: "{{ uname_output.stdout }}"
+      when: os_release.rc != 0
