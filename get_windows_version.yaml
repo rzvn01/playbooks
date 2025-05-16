@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Get Windows OS version information
+      win_shell: |
+        Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" |
+        Select-Object -ExpandProperty ProductName
+      register: os_product
+
+    - name: Set pretty_name fact
+      set_fact:
+        pretty_name: "{{ os_product.stdout }}"
+
+    - name: Display PRETTY_NAME
+      debug:
+        msg: "The pretty name is: {{ pretty_name }}"
