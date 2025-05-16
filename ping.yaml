@@ -1,0 +1,8 @@
+---
+- name: Test WinRM connectivity to Windows hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: WinRM ping (checks basic connectivity)
+      win_ping:
