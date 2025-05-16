@@ -1,0 +1,29 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Get OS release information
+      shell: cat /etc/os-release
+      register: os_release
+
+    - name: Extract PRETTY_NAME
+      set_fact:
+        pretty_name: "{{ os_release.stdout | regex_search('PRETTY_NAME=\"(.+?)\"', '\\1') }}"
+
+    - name: Display PRETTY_NAME
+      debug:
+        msg: "The pretty name is: {{ pretty_name }}"
+
+    - name: Install htop on Debian/Ubuntu
+      apt:
+        name: htop
+        state: present
+      when: "'Ubuntu' in pretty_name or 'Debian' in pretty_name"
+      become: yes
+
+    - name: Install htop on RHEL/CentOS/Fedora
+      yum:
+        name: htop
+        state: present
+      when: "'CentOS' in pretty_name or 'Red Hat' in pretty_name or 'Fedora' in pretty_name"
+      become: yes
